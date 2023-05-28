@@ -37,10 +37,10 @@ project demo được lấy tại github: https://github.com/liamhubian/techmast
     Truy cập Shell của container chứa MySQL thông qua công cụ K9s.
     Sau đó truy cập MySQL qua câu lệnh `mysql -u root -p`. Tạo thêm database có tên obo `create database obo;`. Thoát MySQL `exit`.
     Đổ/Bung... dữ liệu từ file obo.spl trong thư mục hostPath:
-        ```
-        cd hostPath
-        mysql -u root -p obo < obo.sql
-        ```
+    ```bash
+    cd hostPath
+    mysql -u root -p obo < obo.sql
+    ```
     Các câu lệnh `mysql ...` nhập mật khẩu là `123`
 > - Như vậy là đã có dữ liệu được lưu trong MySQL database chạy trên môi trường K8s
 
@@ -53,7 +53,7 @@ project demo được lấy tại github: https://github.com/liamhubian/techmast
     (quá trình test sẽ báo fail và ra lỗi khi không thể truy cập tới địa chỉ ip trong file application-dev.properties)
     Thay thế dòng lệnh `RUN mvn install` bằng `RUN mvn clean install -Dmaven.test.skip=true`
 > - Build dự án thành Docker image và push lên Docker hub với các lệnh
-    ```
+    ```bash
     docker build -t vietdinhbrj/obo-web:1.1 .
     docker tag docker.io/vietdinhbrj/obo-web:1.1 vietdinhbrj/obo-web:1.1
     docker push vietdinhbrj/obo-web:1.1
@@ -62,19 +62,19 @@ project demo được lấy tại github: https://github.com/liamhubian/techmast
 
 ### Bước 3: triển khai ứng dụng trên môi trường Kubernetes
 > - Sửa file obo-web.yaml với những cấu hình để triển khai Docker image vietdinhbrj/obo-web:1.
-    ```
+    ```yaml
     containers:
     - image: vietdinhbrj/obo-web:1.1
     ```
 > - Vẫn là file obo-web.yaml. Xóa cấu hình configMap. Bởi vì repo xử dụng trong bài lap này đã được gán cứng địa chỉ ip tới MySQL cho nên không cần truyền các giá trị biến môi trường qua configMap nữa.
-    xóa
-    ```
+    Xóa
+
+    ```yaml
     volumes:
       - name: web-config
         configMap:
           name: obo-web-config
-    ```
-    ```
+    ...
     volumeMounts:
         - name: web-config
           mountPath: /techmaster-obo-web/src/main/resources/application-dev.properties
